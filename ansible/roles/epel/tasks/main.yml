@@ -1,0 +1,11 @@
+---
+
+- name: install epel repo
+  yum:
+    name: "{{ epel.url }}"
+    state: present
+
+- name: install epel gpg key
+  rpm_key:
+    key: "{{ epel.key }}"
+    state: present

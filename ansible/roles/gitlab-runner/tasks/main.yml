@@ -1,0 +1,36 @@
+---
+
+- name: install gitlab-ci-multi-runner gpg key
+  rpm_key:
+    key: https://packages.gitlab.com/runner/gitlab-ci-multi-runner/gpgkey
+    state: present
+
+- name: install gitlab-ci-multi-runner repo
+  yum_repository:
+    name: gitlab-ci-multi-runner
+    description: gitlab-ci-multi-runner
+    baseurl: https://packages.gitlab.com/runner/gitlab-ci-multi-runner/el/6/$basearch
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://packages.gitlab.com/runner/gitlab-ci-multi-runner/gpgkey
+    sslverify: yes
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    metadata_expire: 300
+
+- name: install gitlab-ci-multi-runner-source repo
+  yum_repository:
+    name: gitlab-ci-multi-runner-source
+    description: gitlab-ci-multi-runner-source
+    baseurl: https://packages.gitlab.com/runner/gitlab-ci-multi-runner/el/6/SRPMS
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://packages.gitlab.com/runner/gitlab-ci-multi-runner/gpgkey
+    sslverify: yes
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    metadata_expire: 300
+
+- name: install gitlab-ci-multi-runner
+  yum:
+    name: gitlab-ci-multi-runner
+    state: present
+    disable_gpg_check: yes # why???

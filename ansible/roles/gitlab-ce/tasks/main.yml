@@ -1,0 +1,52 @@
+---
+
+- name: install gitlab-ce prereqs
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - curl
+    - openssh-server
+    - openssh-clients
+    - postfix
+    - cronie
+
+- name: install gitlab-ce gpg key
+  rpm_key:
+    key: https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+    state: present
+
+- name: install gitlab-ce repo
+  yum_repository:
+    name: gitlab-ce
+    description: gitlab-ce
+    baseurl: https://packages.gitlab.com/gitlab/gitlab-ce/el/6/$basearch
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+    sslverify: yes
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    metadata_expire: 300
+
+- name: install gitlab-ce source repo
+  yum_repository:
+    name: gitlab-ce-source
+    description: gitlab-ce-source
+    baseurl: https://packages.gitlab.com/gitlab/gitlab-ce/el/6/SRPMS
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+    sslverify: yes
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    metadata_expire: 300
+
+- name: install gitlab-ce
+  yum:
+    name: gitlab-ce
+    state: present
+    disable_gpg_check: yes # why???
+
+- name: gitlab-ctl reconfigure
+  shell: gitlab-ctl reconfigure
+  args:
+    creates: /etc/gitlab/gitlab-secrets.json
